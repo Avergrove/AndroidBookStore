@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
-public class MainActivity extends Activity implements AdapterView.OnItemClickListener{
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 bookListView.setOnItemClickListener(MainActivity.this);
             }
         }.execute();
+
+        // Setup searchview listener
+        SearchView searchView = findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(this);
     }
 
     @Override
@@ -48,5 +52,44 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         Intent detailsActivityIntent = new Intent(this, DetailsActivity.class);
         detailsActivityIntent.putExtra("bookId", book.get("bookId"));
         startActivity(detailsActivityIntent);
+    }
+
+    // Code to run when query text is submitted on search view
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        List<Book> books = Book.getBooksByTitle(s);
+
+        ArrayAdapter<Book> bookListAdapter = new BookListAdapter(MainActivity.this, R.layout.book_list_layout, books);
+        ListView bookListView = findViewById(R.id.bookListView);
+        bookListView.setAdapter(bookListAdapter);
+        bookListView.setOnItemClickListener(MainActivity.this);
+
+        return false;
+    }
+
+    // Code to run when search bar text changes
+    @Override
+    public boolean onQueryTextChange(String s) {
+        if(s.isEmpty()) {
+            new AsyncTask<Void, Void, List<Book>>() {
+                @Override
+                protected List<Book> doInBackground(Void... params) {
+                    return Book.getBooks();
+                }
+
+                @Override
+                protected void onPostExecute(List<Book> books) {
+                    ArrayAdapter<Book> bookListAdapter = new BookListAdapter(MainActivity.this, R.layout.book_list_layout, books);
+                    ListView bookListView = findViewById(R.id.bookListView);
+                    bookListView.setAdapter(bookListAdapter);
+                    bookListView.setOnItemClickListener(MainActivity.this);
+                }
+            }.execute();
+
+            // Setup searchview listener
+            SearchView searchView = findViewById(R.id.searchView);
+            searchView.setOnQueryTextListener(this);
+        }
+        return false;
     }
 }
