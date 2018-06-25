@@ -1,11 +1,13 @@
 package com.example.averg.jsonproject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -70,11 +72,17 @@ public class DetailsActivity extends Activity {
 
     // Turns edittexts into textviews, hide self and reveal update information button again
     protected void onCancelButtonClick(View v){
+
+        // Unflip the visibility
         this.flipVisibility(FLIPMODE_UNFLIP);
+
+        // Refresh book attribute
         refreshBookDetails();
     }
 
     protected void onSubmitButtonClick(View v){
+
+        // Unflip the visiblity
         this.flipVisibility(FLIPMODE_UNFLIP);
 
         // Save book attributes
@@ -82,26 +90,28 @@ public class DetailsActivity extends Activity {
 
         // Create a JSON object from the book
         JSONObject postBook = new JSONObject();
-
+        
         try {
             postBook.put("Author", b.get("author"));
-            postBook.put("BookID", b.get("bookId"));
-            postBook.put("CategoryID", b.get("categoryId"));
+            postBook.put("BookID", Integer.parseInt(b.get("bookId")));
+            postBook.put("CategoryID", Integer.parseInt(b.get("categoryId")));
             postBook.put("CategoryName", "poopoohead");
-            postBook.put("FinalPrice", b.get("finalPrice"));
+            postBook.put("FinalPrice", Double.parseDouble(b.get("finalPrice")));
             postBook.put("ISBN", b.get("isbn"));
-            postBook.put("Price", b.get("price"));
-            postBook.put("SWDiscount", b.get("swDiscount"));
-            postBook.put("Stock", b.get("stock"));
+            postBook.put("Price", Double.parseDouble(b.get("price")));
+            postBook.put("SWDiscount", Double.parseDouble(b.get("storeWideDiscount")));
+            postBook.put("Stock", Integer.parseInt(b.get("stock")));
             postBook.put("Synopsis", b.get("synopsis"));
             postBook.put("Title", b.get("title"));
 
 
             // Send the object to the server.
             String result = JSONParser.postStream(StaticConstants.JSON_ADDRESS+"/Update", postBook.toString());
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // Referesh the UI
         refreshBookDetails();
     }
 

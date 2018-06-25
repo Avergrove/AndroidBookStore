@@ -66,6 +66,7 @@ public class JSONParser {
 
     public static String postStream(String url, String data) {
         InputStream is = null;
+        Log.i("JSONData: ", data.toString());
         try {
             URL u = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) u.openConnection();

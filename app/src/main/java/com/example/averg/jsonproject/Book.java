@@ -105,7 +105,6 @@ public class Book extends HashMap<String, String> {
                         "true"));
             }
         } catch (Exception e) {
-            Log.e("NewsItem", "JSONArray error");
             e.printStackTrace();
         }
         return(list);
@@ -132,7 +131,6 @@ public class Book extends HashMap<String, String> {
                         "true"));
             }
         } catch (Exception e) {
-            Log.e("NewsItem", "JSONArray error");
             e.printStackTrace();
         }
         return(list);
@@ -151,6 +149,8 @@ public class Book extends HashMap<String, String> {
 
         return bitmap;
     }
+
+    // Saves book to the database
 
 
 }
