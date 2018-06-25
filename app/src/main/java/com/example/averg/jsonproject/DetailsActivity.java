@@ -153,6 +153,10 @@ public class DetailsActivity extends Activity {
 
     // Refreshes the textview with new Book data
     protected void refreshBookDetails(){
+
+        // Refresh information in the book model
+        b = Book.getBookById(bookId);
+
         // Reload the UI
         TextView titleTextView = findViewById(R.id.titleTextView);
         titleTextView.setText(b.get("title"));
@@ -170,7 +174,7 @@ public class DetailsActivity extends Activity {
         bookImageView.setImageBitmap(Book.getBookImage(bookId));
     }
 
-    // Saves the atrtributes of the book based on the editTexts
+    // Saves the attributes of the book based on the editTexts
     // TODO: Do for other attributes other than synopsis
     protected void saveBookAttributes(){
 

@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -78,9 +79,15 @@ public class JSONParser {
             OutputStream os = new BufferedOutputStream(conn.getOutputStream());
             os.write(data.getBytes());
             os.flush();
-            is = conn.getInputStream();
+            // is = conn.getInputStream();
+            int status = conn.getResponseCode();
+            if(status >= 400){
+                Log.i("Prettifier", "\n\n\n");
+                Log.e("ConnError", conn.getErrorStream().toString());
+            }
+
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("postStream Exception", StackTrace.trace(e));
         }
         return readStream(is);
     }
