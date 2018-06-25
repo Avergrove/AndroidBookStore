@@ -2,6 +2,8 @@ package com.example.averg.jsonproject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -28,14 +31,44 @@ public class DetailsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
+        //StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
         setContentView(R.layout.activity_details);
 
         // Fetch URL from the intent
         Intent intent = getIntent();
         bookId = intent.getStringExtra("bookId");
+        new AsyncTask<String, Void, Book>(){
+            @Override
+            protected Book doInBackground(String... params) {
+                return Book.getBookById(params[0]);
+            }
+            @Override
+            protected void onPostExecute(Book result) {
+                final Book b= result;
+                TextView titleTextView=(TextView) findViewById(R.id.titleTextView);
+                titleTextView.setText(result.get("title"));
+                TextView authorTextView=(TextView) findViewById(R.id.authorTextView);
+                authorTextView.setText(result.get("author"));
+                TextView priceTextView=(TextView) findViewById(R.id.priceTextView);
+                priceTextView.setText(result.get("price"));
+                TextView synopsis=(TextView) findViewById(R.id.synopsisTextView);
+                synopsis.setText(result.get("synopsis"));
+            }
+        }.execute(bookId);
 
-        // Get data from the URL
+        new AsyncTask<String, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(String... params) {
+                return Book.getBookImage(params[0]);
+            }
+            @Override
+            protected void onPostExecute(Bitmap result) {
+                ImageView imageView =(ImageView) findViewById(R.id.bookImageView);
+                imageView.setImageBitmap(result);
+            }
+        }.execute(bookId);
+
+        /*// Get data from the URL
         b = Book.getBookById(bookId);
 
         // Reload the UI
@@ -52,7 +85,7 @@ public class DetailsActivity extends Activity {
         synopsisTextView.setText(b.get("synopsis"));
 
         ImageView bookImageView = findViewById(R.id.bookImageView);
-        bookImageView.setImageBitmap(Book.getBookImage(bookId));
+        bookImageView.setImageBitmap(Book.getBookImage(bookId));*/
 
     }
 
@@ -99,6 +132,8 @@ public class DetailsActivity extends Activity {
 
             // Send the object to the server.
             String result = JSONParser.postStream(StaticConstants.JSON_ADDRESS+"/Update", postBook.toString());
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -154,6 +189,38 @@ public class DetailsActivity extends Activity {
     // Refreshes the textview with new Book data
     protected void refreshBookDetails(){
 
+        new AsyncTask<String, Void, Book>(){
+            @Override
+            protected Book doInBackground(String... params) {
+                return Book.getBookById(params[0]);
+            }
+            @Override
+            protected void onPostExecute(Book result) {
+                final Book b= result;
+                TextView titleTextView=(TextView) findViewById(R.id.titleTextView);
+                titleTextView.setText(result.get("title"));
+                TextView authorTextView=(TextView) findViewById(R.id.authorTextView);
+                authorTextView.setText(result.get("author"));
+                TextView priceTextView=(TextView) findViewById(R.id.priceTextView);
+                priceTextView.setText(result.get("price"));
+                TextView synopsis=(TextView) findViewById(R.id.synopsisTextView);
+                synopsis.setText(result.get("synopsis"));
+            }
+        }.execute(bookId);
+
+        new AsyncTask<String, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(String... params) {
+                return Book.getBookImage(params[0]);
+            }
+            @Override
+            protected void onPostExecute(Bitmap result) {
+                ImageView imageView =(ImageView) findViewById(R.id.bookImageView);
+                imageView.setImageBitmap(result);
+            }
+        }.execute(bookId);
+
+        /*
         // Refresh information in the book model
         b = Book.getBookById(bookId);
 
@@ -172,6 +239,7 @@ public class DetailsActivity extends Activity {
 
         ImageView bookImageView = findViewById(R.id.bookImageView);
         bookImageView.setImageBitmap(Book.getBookImage(bookId));
+        */
     }
 
     // Saves the attributes of the book based on the editTexts
