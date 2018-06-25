@@ -60,7 +60,7 @@ public class Book extends HashMap<String, String> {
     // Get all details of a book with a url
     public static Book getBookById(String bookId){
         Book book = null;
-        JSONObject b = JSONParser.getJSONFromUrl(StaticConstants.JSON_ADDRESS + "Books/" + bookId);
+        JSONObject b = JSONParser.getJSONFromUrl(StaticConstants.JSON_ADDRESS + "/Books/" + bookId);
         try {
             book = new Book(
                     b.getString("BookID"),
@@ -108,8 +108,33 @@ public class Book extends HashMap<String, String> {
             Log.e("NewsItem", "JSONArray error");
             e.printStackTrace();
         }
+        return(list);
+    }
 
-
+    // Fetch a list of books by title
+    public static List<Book> getBooksByTitle(String searchQuery) {
+        List<Book> list = new ArrayList<Book>();
+        JSONArray a = JSONParser.getJSONArrayFromUrl(StaticConstants.JSON_ADDRESS + "/title/" + searchQuery);
+        try {
+            for (int i =0; i<a.length(); i++) {
+                JSONObject b = a.getJSONObject(i);
+                list.add(new Book(
+                        b.getString("BookID"),
+                        b.getString("Title"),
+                        b.getString("CategoryID"),
+                        b.getString("ISBN"),
+                        b.getString("Author"),
+                        b.getString("Stock"),
+                        b.getString("Price"),
+                        b.getString("Synopsis"),
+                        b.getString("SWDiscount"),
+                        b.getString("FinalPrice"),
+                        "true"));
+            }
+        } catch (Exception e) {
+            Log.e("NewsItem", "JSONArray error");
+            e.printStackTrace();
+        }
         return(list);
     }
 
@@ -118,7 +143,7 @@ public class Book extends HashMap<String, String> {
         // Set image
         Bitmap bitmap = null;
         try {
-            bitmap = BitmapFactory.decodeStream((InputStream) new URL(StaticConstants.JSON_ADDRESS_IMAGE + getBookById(bookId).get("isbn") + ".jpg").getContent());
+            bitmap = BitmapFactory.decodeStream((InputStream) new URL(StaticConstants.JSON_ADDRESS_IMAGE + "/" + getBookById(bookId).get("isbn") + ".jpg").getContent());
         }
         catch (Exception e){
             e.printStackTrace();

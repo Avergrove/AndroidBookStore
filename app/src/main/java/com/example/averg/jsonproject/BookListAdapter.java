@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.InputStream;
@@ -47,7 +49,7 @@ public class BookListAdapter extends ArrayAdapter<Book> {
             // Set image
             Bitmap bitmap = null;
             try {
-                bitmap = BitmapFactory.decodeStream((InputStream) new URL(StaticConstants.JSON_ADDRESS_IMAGE + book.get("isbn") + ".jpg").getContent());
+                bitmap = BitmapFactory.decodeStream((InputStream) new URL(StaticConstants.JSON_ADDRESS_IMAGE + "/" + book.get("isbn") + ".jpg").getContent());
             }
             catch (Exception e){
                 e.printStackTrace();
