@@ -21,7 +21,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
+        //StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
         setContentView(R.layout.activity_main);
 
         // Fetches book in the background, and binds it to the list view
@@ -57,12 +57,28 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     // Code to run when query text is submitted on search view
     @Override
     public boolean onQueryTextSubmit(String s) {
-        List<Book> books = Book.getBooksByTitle(s);
+        if(s!=null) {
+            new AsyncTask<String, Void, List<Book>>() {
+                @Override
+                protected List<Book> doInBackground(String... params) {
+                    return Book.getBooksByTitle(params[0]);
+                }
+
+                @Override
+                protected void onPostExecute(List<Book> result) {
+                    ArrayAdapter<Book> adapter = new BookListAdapter(MainActivity.this, R.layout.book_list_layout, result);
+                    ListView listView = findViewById(R.id.bookListView);
+                    listView.setAdapter(adapter);
+                    listView.setOnItemClickListener(MainActivity.this);
+                }
+            }.execute(s);
+        }
+        /*List<Book> books = Book.getBooksByTitle(s);
 
         ArrayAdapter<Book> bookListAdapter = new BookListAdapter(MainActivity.this, R.layout.book_list_layout, books);
         ListView bookListView = findViewById(R.id.bookListView);
         bookListView.setAdapter(bookListAdapter);
-        bookListView.setOnItemClickListener(MainActivity.this);
+        bookListView.setOnItemClickListener(MainActivity.this);*/
 
         return false;
     }

@@ -18,7 +18,6 @@ import java.net.URL;
 import java.util.List;
 
 public class BookListAdapter extends ArrayAdapter<Book> {
-
     private List<Book> items;
     int resource;
 
@@ -47,7 +46,19 @@ public class BookListAdapter extends ArrayAdapter<Book> {
             author.setText(book.get("author"));
 
             // Set image
-            Bitmap bitmap = null;
+            final ImageView image = (ImageView) v.findViewById(R.id.bookImageView);
+            new AsyncTask<String, Void, Bitmap>() {
+                @Override
+                protected Bitmap doInBackground(String... params) {
+                    return Book.getBookImage(params[0]);
+                }
+                @Override
+                protected void onPostExecute(Bitmap result) {
+                    image.setImageBitmap(result);
+                }
+            }.execute(book.get("bookId"));
+
+            /*Bitmap bitmap = null;
             try {
                 bitmap = BitmapFactory.decodeStream((InputStream) new URL(StaticConstants.JSON_ADDRESS_IMAGE + "/" + book.get("isbn") + ".jpg").getContent());
             }
@@ -55,7 +66,7 @@ public class BookListAdapter extends ArrayAdapter<Book> {
                 e.printStackTrace();
             }
             ImageView bookImageView = v.findViewById(R.id.bookImageView);
-            bookImageView.setImageBitmap(bitmap);
+            bookImageView.setImageBitmap(bitmap);*/
             //image.setImageBitmap(Employee.getPhoto(true, eid));
         }
         return v;
