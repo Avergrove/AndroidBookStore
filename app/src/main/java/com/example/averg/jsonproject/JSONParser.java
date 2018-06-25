@@ -90,7 +90,7 @@ public class JSONParser {
         } catch (Exception e) {
             Log.e("postStream Exception", StackTrace.trace(e));
         }
-        return readStream(is);
+        return "PLACEHOLDER ERROR: JSON PARSER";
     }
 
 
